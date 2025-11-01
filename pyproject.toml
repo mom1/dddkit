@@ -1,0 +1,330 @@
+# ---- Project Info and Dependencies ----
+
+[project.urls]
+Repository = "https://github.com/mom1/dddkit"
+# Homepage = "https://..."
+# Documentation = "https://..."
+
+[project]
+name = "dddkit"
+description = "Kit for using DDD tactical patterns"
+authors = [
+  { name = "MaxST", email = "mstolpasov@gmail.com" },
+]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+dynamic = ["version"]
+
+# https://pypi.org/classifiers/
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+
+
+# ---- Main dependencies ----
+
+dependencies = [
+  "typing-extensions>=4.0.0",
+]
+
+[project.optional-dependencies]
+pydantic = [
+  "pydantic>=2.0.0",
+]
+
+# ---- Dev dependencies ----
+[tool.uv]
+default-groups = ["dev", "lint"]
+
+[dependency-groups]
+dev = [
+  "pytest==8.4.*",
+  "pytest-sugar==1.1.*",
+  "pytest-cov==7.0.*",
+  "coverage==7.11.*",
+  "pytest-asyncio==1.2.*",
+  "coverage==7.11.*",
+  "rich==14.2.*",
+  "funlog==0.2.*",
+]
+lint = [
+  "ruff==0.14.*",
+  "basedpyright==1.32.*"
+]
+
+# ---- Build system ----
+
+# Dynamic versioning from:
+# https://github.com/ninoseki/uv-dynamic-versioning/
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning>=0.7.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+# Note JSON schemas don't seem to be right for tool.hatch.version.source so
+# this may cause false warnings in IDEs.
+# https://github.com/ninoseki/uv-dynamic-versioning/issues/21
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+
+[tool.hatch.build.targets.wheel]
+# The source location for the package.
+packages = ["src/dddkit"]
+
+
+# ---- Settings ----
+
+[tool.ruff]
+# ruff configuration:
+# https://docs.astral.sh/ruff/settings/#top-level
+target-version = "py310"
+line-length = 120
+fix = true
+unsafe-fixes = true
+extend-exclude = [
+  ".hypothesis",
+  ".pytest_cache",
+  ".gitlab",
+  ".github",
+  ".vscode",
+  "__pycache__",
+  "docs/*",
+]
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+explicit-preview-rules = true
+preview = true
+# https://docs.astral.sh/ruff/rules/
+extend-select = [
+  "A",       # flake8-builtins
+  "ANN201",  # flake8-annotations (missing-return-type-undocumented-public-function)
+  "ANN202",  # flake8-annotations (missing-return-type-private-function)
+  "ANN204",  # flake8-annotations (missing-return-type-special-method)
+  "ANN205",  # flake8-annotations (missing-return-type-static-method)
+  "ANN206",  # flake8-annotations (missing-return-type-class-method)
+  "ASYNC",   # flake8-async
+  "B",       # flake8-bugbear
+  "C4",      # flake8-comprehensions
+  "C90",     # mccabe
+  "D",       # pydocstyle
+  "DJ",      # flake8-django
+  "DTZ",     # flake8-datetimez
+  "E",       # pycodestyle Error
+  "ERA",     # eradicate
+  "F",       # pyflakes
+  "FLY",     # flynt
+  "FURB129", # readlines-in-for
+  "FURB169", # type-none-comparison
+  "G",       # flake8-logging-format
+  "I",       # isort
+  "ISC",     # flake8-implicit-str-concat
+  "N",       # pep8-naming
+  "PERF",    # Perflint
+  "PGH",     # pygrep-hooks
+  "PIE",     # flake8-pie
+  "PL",      # pylint
+  "PT",      # flake8-pytest-style
+  "PTH",     # flake8-use-pathlib
+  "PYI",     # flake8-pyi
+  "Q",       # flake8-quotes
+  "RET",     # flake8-return
+  "RSE",     # flake8-raise
+  "RUF",     # Ruff-specific rules
+  "S",       # flake8-bandit
+  "SIM",     # flake8-simplify
+  "SLOT",    # flake8-slots
+  "T20",     # flake8-print
+  "TID",     # flake8-tidy-imports
+  "TRY",     # tryceratops
+  "UP",      # pyupgrade
+  "W",       # pycodestyle Warning
+  # preview
+  "B909",    # loop-iterator-mutation
+  "C419",    # unnecessary-comprehension-in-call
+  "FURB110", # if-exp-instead-of-or-operator
+  "FURB142", # for-loop-set-mutations
+  "FURB148", # unnecessary-enumerate
+  "UP042",   # replace-str-enum
+]
+
+extend-ignore = [
+  "D100",     # Missing docstring in public module
+  "D101",     # Missing docstring in public class
+  "D102",     # Missing docstring in public method
+  "D103",     # Missing docstring in public function
+  "D104",     # Missing docstring in public package
+  "D105",     # Missing docstring in magic method
+  "D106",     # Missing docstring in public nested class
+  "D107",     # Missing docstring in __init__
+  "D203",     # 1 blank line required before class docstring
+  "D213",     # Multi-line docstring summary should start at the second line
+  "D301",     # Use r""" if any backslashes in a docstring
+  "D401",     # The First line of docstring should be in imperative mood
+  "D413",     # Missing blank line after last section ("{name}")
+  "DJ012",    # django-unordered-body-content-in-model
+  "E203",     # Whitespace around slice operators
+  "G004",     # logging-f-string
+  "PLR0913",  # too-many-arguments
+  "RET501",   # Do not explicitly `return None` in function if it is the only possible return value
+  "RET502",   # Do not implicitly `return None` in function able to return non-`None` value
+  "RET503",   # Missing explicit `return` at the end of function able to return non-`None` value
+  "RUF001",   # ambiguous-unicode-character-string
+  "RUF002",   # ambiguous-unicode-character-docstring
+  "RUF003",   # ambiguous-unicode-character-comment
+  "RUF012",   # Mutable class attributes should be annotated with typing.ClassVar
+  "S105",     # hardcoded-password-string
+  "S110",     # try-except-pass detected, consider logging the exception TODO: хочу включить, нужно обсудить.
+  "S608",     # hardcoded-sql-expression
+  "SIM105",   # Use contextlib.suppress({exception}) instead of try-except-pass
+  "TRY003",   # raise-vanilla-args TODO: хочу включить, нужно обсудить.
+  "S610",     # django-extra
+  # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+  "W191",     # tab-indentation
+  "E111",     # indentation-with-invalid-multiple
+  "E114",     # indentation-with-invalid-multiple-comment
+  "E117",     # over-indented
+  "D206",     # indent-with-spaces
+  "D300",     # triple-single-quotes
+  "Q000",     # bad-quotes-inline-string
+  "Q001",     # bad-quotes-multiline-string
+  "Q002",     # bad-quotes-docstring
+  "Q003",     # avoidable-escaped-quote
+  "COM812",   # missing-trailing-comma
+  "COM819",   # prohibited-trailing-comma
+  "ISC001",   # single-line-implicit-string-concatenation
+  "ISC002",   # multi-line-implicit-string-concatenation
+]
+logger-objects = ["structlog"]
+
+# plugins
+# https://docs.astral.sh/ruff/rules/#mccabe-c90
+mccabe = { max-complexity = 8 }
+# https://docs.astral.sh/ruff/rules/#flake8-quotes-q
+flake8-quotes = { inline-quotes = "single" }
+# https://docs.astral.sh/ruff/rules/#flake8-builtins-a
+flake8-builtins = { builtins-ignorelist = [
+  "id",
+  "type",
+  "help",
+  "open",
+  "all",
+  "format",
+] }
+# https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+pydocstyle = { convention = "google" }
+
+[tool.ruff.lint.isort]
+# https://docs.astral.sh/ruff/settings/#lintisort
+combine-as-imports = true
+known-local-folder = ["."]
+
+[tool.ruff.lint.flake8-tidy-imports]
+# https://beta.ruff.rs/docs/rules/#flake8-tidy-imports-tid
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"pydantic.dataclasses.dataclass".msg = "Use 'from dataclasses import dataclass'"
+"typing.TypedDict".msg = "Use 'from typing_extensions import TypedDict'"  # до python 3.12
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+  "S101",     # assert
+  "S106",     # hardcoded-password-func-arg
+  "S311",     # suspicious-non-cryptographic-random-usage
+  "PLR2004",  # magic-value-comparison
+  "ANN",      # flake8-annotations
+  "RUF018",   # assignment-in-assert
+]
+
+
+[tool.ruff.format]
+# https://docs.astral.sh/ruff/settings/#format
+quote-style = "single"
+
+[tool.basedpyright]
+# BasedPyright currently seems like the best type checker option, much faster
+# than mypy and with a good extension for VSCode/Cursor.
+# https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright
+# https://docs.basedpyright.com/latest/configuration/config-files/#sample-pyprojecttoml-file
+include = ["src", "tests"]
+# By default BasedPyright is very strict, so you almost certainly want to disable
+# some of the rules.
+# First, these turn off warnings about (yes) how you ignore warnings:
+reportIgnoreCommentWithoutRule = false
+reportUnnecessaryTypeIgnoreComment = false
+# A few typically noisy warnings are next.
+# How many you enable is up to you. The first few are off by default, but you can
+# comment/uncomment these as desired:
+reportMissingTypeStubs = false
+reportUnusedCallResult = false
+reportAny = false
+reportExplicitAny = false
+reportImplicitStringConcatenation = false
+reportUnreachable = false
+# reportPrivateImportUsage = false
+# reportPrivateLocalImportUsage = false
+# reportMissingImports = false
+reportUnnecessaryIsInstance = false
+# reportUnknownVariableType = false
+# reportUnknownArgumentType = false
+reportUninitializedInstanceVariable = false
+reportUnusedParameter = false
+
+[tool.pytest.ini_options]
+python_files = ["*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+testpaths = [
+  "src",
+  "tests",
+]
+norecursedirs = []
+filterwarnings = []
+
+asyncio_mode = 'auto'
+asyncio_default_fixture_loop_scope = 'function'
+
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if self.debug:",
+  "if settings.DEBUG",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "except ImportError:",
+  'class .*\bProtocol\):',
+  '@(abc\.)?abstractmethod',
+]
+omit = ["*/tests/*"]
+show_missing = true
+precision = 2
+skip_empty = true
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*"]

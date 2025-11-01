@@ -1,0 +1,46 @@
+---
+default_language_version:
+  python: python3.10
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: double-quote-string-fixer
+      - id: check-toml
+      - id: detect-private-key
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.39.0
+    hooks:
+      - id: typos
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.7
+    hooks:
+      - id: docformatter
+        args:
+          - --black
+          - --non-strict
+          - --style
+          - 'epytext'
+          - --in-place
+          - --wrap-summaries
+          - '119'
+          - --wrap-descriptions
+          - '119'
+        language: python
+  - repo: local
+    hooks:
+      - id: py-lint
+        name: Linting python
+        entry: make lint
+        language: system
+        files: \.pyi?$
+        exclude: '.*/migrations/.*\.py$'
+      - id: py-format
+        name: Formatting python
+        entry: make format
+        language: system
+        require_serial: true
+        files: \.pyi?$
