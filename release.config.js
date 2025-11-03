@@ -121,12 +121,6 @@ module.exports = {
             },
         ],
         [
-            "@semantic-release/exec",
-            {
-                prepareCmd: "uv run pytest && uv build"
-            },
-        ],
-        [
             "@semantic-release/git",
             {
                 assets: ["CHANGELOG.md"],
@@ -135,6 +129,12 @@ module.exports = {
                     '',
                     'Automatically generated'
                 ].join('\n')
+            },
+        ],
+        [
+            "@semantic-release/exec",
+            {
+                prepareCmd: "uv build"
             },
         ],
         [
