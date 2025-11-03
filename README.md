@@ -123,8 +123,7 @@ class Basket(Aggregate):
 
   @classmethod
   def new(cls, basket_id: BasketId):
-    basket = cls(basket_id=basket_id)
-    return basket
+    return cls(basket_id=basket_id)
 
   def add_item(self, item: Product):
     if _item := self.items.get(item.product_id):
@@ -167,22 +166,13 @@ class Basket(Aggregate):
   basket_id: BasketId
   items: dict[ProductId, Product] = Field(default_factory=dict)
 
-  class Created(AggregateEvent):
-    """Basket created event"""
-
-  class AddedItem(AggregateEvent):
-    item: Product
-
   @classmethod
   def new(cls, basket_id: BasketId):
-    basket = cls(basket_id=basket_id)
-    basket.add_event(cls.Created())
-    return basket
+    return cls(basket_id=basket_id)
 
   def add_item(self, item: Product):
     if _item := self.items.get(item.product_id):
       _item.amount = item.amount
-      self.add_event(self.AddedItem(item=_item))
 
 
 # Use repositories and event handling

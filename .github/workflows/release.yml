@@ -10,6 +10,7 @@ permissions:
 jobs:
   release:
     name: Release
+    if: "!contains(github.event.head_commit.message, ':bookmark:')"
     runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
@@ -35,11 +36,11 @@ jobs:
           @semantic-release/github@12.0.1
           semantic-release-gitmoji@1.6.8
       - name: Install uv (official Astral action)
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.9.7"
           enable-cache: true
-          python-version: "3.12"
+          python-version: "3.14"
 
       - name: Set up Python (using uv)
         run: uv python install

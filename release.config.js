@@ -125,7 +125,7 @@ module.exports = {
             {
                 assets: ["CHANGELOG.md"],
                 message: [
-                    ':bookmark: v${nextRelease.version}  [skip ci]',
+                    ':bookmark: v${nextRelease.version}',
                     '',
                     'Automatically generated'
                 ].join('\n')
