@@ -1,5 +1,10 @@
 <!--next-version-placeholder-->
 
+## v0.2.1 (2025-11-03)
+
+  ### ♻ Changes
+    -  Remove pytest from publish workflow and release config.
+
 ## v0.2.0 (2025-11-03)
 
   ### ✨ New
