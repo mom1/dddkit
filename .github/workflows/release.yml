@@ -34,6 +34,19 @@ jobs:
           @semantic-release/exec@7.1.0
           @semantic-release/github@12.0.1
           semantic-release-gitmoji@1.6.8
+      - name: Install uv (official Astral action)
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.7"
+          enable-cache: true
+          python-version: "3.12"
+
+      - name: Set up Python (using uv)
+        run: uv python install
+
+      - name: Install all dependencies
+        run: uv sync --all-extras
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

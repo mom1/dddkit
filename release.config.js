@@ -123,7 +123,7 @@ module.exports = {
         [
             "@semantic-release/exec",
             {
-                prepareCmd: "uv build"
+                prepareCmd: "uv run pytest && uv build"
             },
         ],
         [
