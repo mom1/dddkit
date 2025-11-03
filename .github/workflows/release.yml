@@ -1,0 +1,40 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+    steps:
+      - name: Checkout (official GitHub action)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+      - name: Install Semantic Release
+        run: >-
+          npm install --location=global
+          semantic-release@25.0.1
+          @semantic-release/changelog@6.0.3
+          @semantic-release/git@10.0.1
+          @semantic-release/exec@7.1.0
+          @semantic-release/github@12.0.1
+          semantic-release-gitmoji@1.6.8
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release
