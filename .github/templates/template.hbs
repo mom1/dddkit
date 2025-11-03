@@ -1,8 +1,8 @@
 ## v{{nextRelease.version}} ({{datetime "UTC:yyyy-mm-dd"}})
 
 {{#each (sections commits) as |section| }}
-  ### {{section.label}}
-  {{#each section.commits}}
-    {{> commitTemplate is_dep=section.is_dep}}
-  {{/each}}
+### {{section.label}}
+{{#each section.commits}}
+{{> commitTemplate is_dep=section.is_dep}}
+{{/each}}
 {{/each}}
