@@ -1,7 +1,8 @@
-from asyncio import get_running_loop, iscoroutinefunction
+from asyncio import get_running_loop
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from datetime import datetime
+from inspect import iscoroutinefunction
 from typing import TypeAlias, TypeVar
 from uuid import UUID
 from zoneinfo import ZoneInfo

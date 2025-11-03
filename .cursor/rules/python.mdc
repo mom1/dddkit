@@ -9,8 +9,8 @@ These are rules for a modern Python project using uv.
 
 ## Python Version
 
-Write for Python 3.10-3.13. Do NOT write code to support earlier versions of Python.
-Always use modern Python practices appropriate for Python 3.10-3.13.
+Write for Python 3.10-3.14. Do NOT write code to support earlier versions of Python.
+Always use modern Python practices appropriate for Python 3.10-3.14.
 
 Always use full type annotations, generics, and other modern practices.
 

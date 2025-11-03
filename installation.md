@@ -23,5 +23,5 @@ installation methods and platforms.
 Now you can use uv to install a current Python environment:
 
 ```shell
-uv python install 3.13 # Or pick another version.
+uv python install 3.14 # Or pick another version.
 ```
