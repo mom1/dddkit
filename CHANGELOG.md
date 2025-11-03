@@ -1,5 +1,14 @@
 <!--next-version-placeholder-->
 
+## v0.2.2 (2025-11-03)
+
+  ### ♻ Changes
+    -  Updating dependencies and setting up release.
+    
+        - Update astral-sh/setup-uv from v6 to v7
+        - Update python-version from 3.12 to 3.14
+        - Minor documentation fixes
+
 ## v0.2.1 (2025-11-03)
 
   ### ♻ Changes
