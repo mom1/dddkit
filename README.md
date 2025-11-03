@@ -9,7 +9,18 @@
 
 [![PyPI](https://img.shields.io/pypi/v/dddkit.svg)](https://pypi.org/project/dddkit/)
 [![Python Version](https://img.shields.io/pypi/pyversions/dddkit.svg)](https://pypi.org/project/dddkit/)
-[![License](https://img.shields.io/github/license/mom1/dddkit.svg)](https://github.com/mom1/dddkit/blob/main/LICENSE)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/dddkit.svg?label=pip%20installs&logo=python)
+
+[![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg)](https://gitmoji.dev)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://docs.astral.sh/ruff/)
+[![UV](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://docs.astral.sh/uv/)
+
+![GitHub issues](https://img.shields.io/github/issues/mom1/dddkit.svg)
+![GitHub stars](https://img.shields.io/github/stars/mom1/dddkit.svg)
+![GitHub Release Date](https://img.shields.io/github/release-date/mom1/dddkit.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/mom1/dddkit/latest.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/mom1/dddkit.svg)
+[![GitHub license](https://img.shields.io/github/license/mom1/dddkit)](https://github.com/mom1/dddkit/blob/master/LICENSE)
 
 Kit for using DDD (Domain-Driven Design) tactical patterns in Python.
 
