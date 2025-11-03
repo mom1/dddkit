@@ -1,6 +1,6 @@
 <div align="center">
     <picture>
-      <img src="static/kid_ddd.png"
+      <img src="https://raw.githubusercontent.com/mom1/dddkit/main/static/kid_ddd.png"
         alt="DDDKit" style="width: 50%; height: auto;" />
     </picture>
 </div>
