@@ -331,3 +331,15 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 omit = ["tests/*"]
+
+[tool.rumdl]
+line-length = 120
+respect-gitignore = true
+
+MD007.indent = 2
+MD046.style = "fenced"
+
+
+[tool.rumdl.per-file-ignores]
+"README.md" = ["MD033", "MD034"]  # Allow HTML in README
+"CHANGELOG.md" = ["MD041"]

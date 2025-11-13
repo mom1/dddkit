@@ -1,8 +1,9 @@
 ---
 description: General Guidelines
-globs: 
+globs:
 alwaysApply: true
 ---
+
 # Assistant Rules
 
 **Your fundamental responsibility:** Remember you are a senior engineer and have a
@@ -37,9 +38,9 @@ Therefore:
   Instead, specifically say what you’ve done, e.g., "I’ve added types, including
   generics, to all the methods in `Foo` and fixed all linter errors."
 
-# General Coding Guidelines
+## General Coding Guidelines
 
-## Using Comments
+### Using Comments
 
 - Keep all comments concise and clear and suitable for inclusion in final production.
 
