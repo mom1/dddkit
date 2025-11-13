@@ -43,6 +43,15 @@ class TestStory:
         assert hasattr(story, 'I')
         assert story.I.__steps__ == ['step_one', 'step_two']
 
+    def test_story_magic_step_registration(self):
+        class TestStory(Story):
+            I._step_one
+            I.step_two
+
+        story = TestStory()
+        assert hasattr(story, 'I')
+        assert story.I.__steps__ == ['step_two']
+
     def test_sync_story_execution(self, sample_story: SampleStory) -> None:
         state = sample_story.State()
         sample_story(state)
@@ -69,9 +78,9 @@ class TestStory:
         state = sample_story.State()
         sample_story(state)
 
-        assert mock_before_hook.call_count == 3  # Called for each step
-        assert mock_after_hook.call_count == 3  # Called for each step
-        assert mock_error_hook.call_count == 0  # No errors occurred
+        assert mock_before_hook.call_count == 3
+        assert mock_after_hook.call_count == 3
+        assert mock_error_hook.call_count == 0
 
         for call in mock_before_hook.call_args_list:
             context, step_info = call[0]
@@ -87,9 +96,9 @@ class TestStory:
         with pytest.raises(ValueError, match='An error occurred'):
             story_with_error(state)
 
-        assert mock_before_hook.call_count == 2  # Called for step_one and step_error
-        assert mock_after_hook.call_count == 2  # Called for step_one and step_error
-        assert mock_error_hook.call_count == 1  # Called when step_error raised an exception
+        assert mock_before_hook.call_count == 2
+        assert mock_after_hook.call_count == 2
+        assert mock_error_hook.call_count == 1
 
     async def test_async_story_execution_with_hooks(
         self, async_story: AsyncStory, mock_hook: Callable[[Story], tuple[Mock, Mock, Mock]]
@@ -99,9 +108,9 @@ class TestStory:
         state = async_story.State()
         await async_story(state)
 
-        assert mock_before_hook.call_count == 2  # Called for each step
-        assert mock_after_hook.call_count == 2  # Called for each step
-        assert mock_error_hook.call_count == 0  # No errors occurred
+        assert mock_before_hook.call_count == 2
+        assert mock_after_hook.call_count == 2
+        assert mock_error_hook.call_count == 0
 
         for call in mock_before_hook.call_args_list:
             context, step_info = call[0]
