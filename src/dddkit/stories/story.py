@@ -64,7 +64,8 @@ class Steps:
         self.__steps__: list[NameMethod] = []
 
     def __getattr__(self, name: NameMethod) -> None:
-        self.__steps__.append(name)
+        if not name.startswith('_'):
+            self.__steps__.append(name)
 
 
 class _StoryType(type):
