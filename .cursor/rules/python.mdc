@@ -3,7 +3,8 @@ description: Python Coding Guidelines
 globs: *.py,pyproject.toml
 alwaysApply: false
 ---
-# Python Coding Guidelines
+
+## Python Coding Guidelines
 
 These are rules for a modern Python project using uv.
 
@@ -26,6 +27,7 @@ Always use full type annotations, generics, and other modern practices.
   Prefer `uv add` over `uv pip install`.
 
 - You may use the following shortcuts
+
   ```shell
 
   # Install all dependencies:
@@ -39,7 +41,7 @@ Always use full type annotations, generics, and other modern practices.
   # Run tests:
   make test
 
-  # Run uv sync, lint, and test in one command:
+  # Display a description of all available commands
   make
   ```
 
@@ -162,6 +164,7 @@ Always use full type annotations, generics, and other modern practices.
   This is more readable than LONG_ALL_CAPS_VALUES, and you can simply set the value to
   be the same as the name for each.
   For example:
+
   ```python
   class MediaType(Enum):
     """
@@ -183,6 +186,7 @@ Always use full type annotations, generics, and other modern practices.
   ALWAYS use a `dedent()` function to make it more readable.
   You may wish to add a `strip()` as well.
   Example:
+
   ```python
   from textwrap import dedent
   markdown_content = dedent("""
@@ -203,6 +207,7 @@ Always use full type annotations, generics, and other modern practices.
 - DO NOT use comments to state obvious things or repeat what is evident from the code.
   Here is an example of a comment that SHOULD BE REMOVED because it simply repeats the
   code, which is distracting and adds no value:
+
   ```python
   if self.failed == 0:
       # All successful
@@ -212,6 +217,7 @@ Always use full type annotations, generics, and other modern practices.
 ## Guidelines for Docstrings
 
 - Here is an example of the correct style for docstrings:
+
   ```python
   def check_if_url(
       text: UnresolvedLocator, only_schemes: list[str] | None = None
@@ -271,11 +277,13 @@ Always use full type annotations, generics, and other modern practices.
 - Avoid writing trivial wrapper functions.
   For example, when writing a class DO NOT blindly make delegation methods around public
   member variables. DO NOT write methods like this:
+
   ```python
       def reassemble(self) -> str:
         """Call the original reassemble method."""
         return self.paragraph.reassemble()
   ```
+
   In general, the user can just call the enclosed objects methods, reducing code bloat.
 
 - If a function does not use a parameter, but it should still be present, you can use `#

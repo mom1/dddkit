@@ -3,9 +3,10 @@
 ## v0.2.3 (2025-11-03)
 
 ### 📝 Documentation
--  Removed extra padding in the template.
 
-    - Formatting update in changelog.
+- Removed extra padding in the template.
+
+  - Formatting update in changelog.
 
 ## v0.2.2 (2025-11-03)
 

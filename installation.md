@@ -1,4 +1,4 @@
-## Installing uv and Python
+# Installing uv and Python
 
 This project is set up to use [**uv**](https://docs.astral.sh/uv/), the new package
 manager for Python. `uv` replaces traditional use of `pyenv`, `pipx`, `poetry`, `pip`,

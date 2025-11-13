@@ -30,6 +30,11 @@ repos:
           - --wrap-descriptions
           - '119'
         language: python
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: v0.0.174
+    hooks:
+      - id: rumdl
+        args: [--fix]
   - repo: local
     hooks:
       - id: py-lint
