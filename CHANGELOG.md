@@ -1,5 +1,22 @@
 <!--next-version-placeholder-->
 
+## v0.3.0 (2025-11-15)
+
+### ✨ New
+-  add stories functionality with hooks and tests.
+
+### 🐛 Bugs
+-  Exclude private attributes from step registration.
+
+### 📝 Documentation
+-  Add stories documentation and structure overview.
+
+    - Added description of the Stories pattern with usage examples
+    - Added examples of synchronous and asynchronous operations
+    - Added description of hooks for tracking execution
+    - Updated project structure with a section for stories
+    - Fixed headings and formatting
+
 ## v0.2.3 (2025-11-03)
 
 ### 📝 Documentation
