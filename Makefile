@@ -85,7 +85,7 @@ test:  													## Run the tests
 coverage:  											## Run the tests and generate coverage report
 	@echo "${INFO} Running tests with coverage... 📊"
 	@make test-db
-	@uv run pytest tests --cov=src --cov-report=term-missing:skip-covered --cov-report=html --cov-config=pyproject.toml --no-cov-on-fail
+	@uv run pytest tests --cov=src --cov-report=term-missing:skip-covered --cov-report=html --cov-config=pyproject.toml --cov-fail-under=100
 	@echo "${OK} Coverage report generated ✅"
 
 .PHONY: build
