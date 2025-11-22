@@ -268,7 +268,8 @@ async def context():
 Stories provide a pattern for defining sequential business operations with optional hooks for execution tracking,
 logging, and timing.
 
-> **Note**: The stories implementation in DDDKit was inspired by and uses parts of the work from [proofit404/stories](https://github.com/proofit404/stories).
+> **Note**: The stories implementation in DDDKit was inspired by and uses parts of the work
+> from [proofit404/stories](https://github.com/proofit404/stories).
 
 #### Basic Story Usage
 
@@ -450,6 +451,104 @@ class CustomHook:
 # Inject custom hooks
 inject_hooks(HookedStory, hooks=[CustomHook()])
 ```
+
+### Prometheus Metrics Hook
+
+The `PrometheusMetricsHook` is a specialized hook that collects and exposes Prometheus metrics for story execution,
+providing observability and performance monitoring for your DDDKit story operations.
+
+#### Installation
+
+To use the PrometheusMetricsHook, you need to install the optional prometheus dependency:
+
+```bash
+uv pip install dddkit[prometheus]
+```
+
+Or with pip:
+
+```bash
+pip install dddkit[prometheus]
+```
+
+#### Usage
+
+```python
+from dataclasses import dataclass
+from dddkit.stories import I, Story, inject_hooks
+from dddkit.stories.prometheus import PrometheusMetricsHook
+from types import SimpleNamespace
+
+
+@dataclass(frozen=True, slots=True)
+class MonitoredStory(Story):
+  I.step_one
+  I.step_two
+  I.step_three
+
+  class State(SimpleNamespace):
+    step_one_completed: bool = False
+    step_two_completed: bool = False
+    step_three_completed: bool = False
+
+  def step_one(self, state: State):
+    state.step_one_completed = True
+
+  def step_two(self, state: State):
+    state.step_two_completed = True
+
+  def step_three(self, state: State):
+    state.step_three_completed = True
+
+
+# Create an instance of PrometheusMetricsHook
+prometheus_hook = PrometheusMetricsHook(
+  app_name="my_app",
+  prefix="my_service",
+  labels={"env": "production", "version": "1.0.0"},
+  buckets=[5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]  # in milliseconds
+)
+
+# Inject the hook into your story class
+inject_hooks(MonitoredStory, hooks=[prometheus_hook])
+
+# Execute the story
+story = MonitoredStory()
+state = story.State()
+story(state)
+```
+
+#### Configuration Options
+
+The PrometheusMetricsHook class accepts the following configuration parameters:
+
+- `app_name` (str, default: 'dddkit_stories'): The name of the service to use in the metrics
+- `prefix` (str, default: 'dddkit_stories'): The prefix to use for the metrics
+- `labels` (dict[str, str], default: {}): A mapping of labels to add to the metrics
+- `buckets` (list[str | float] | None, default: None): A list of buckets to use for the histogram. If not provided,
+  defaults to [10, 25, 50, 100, 300, 500, 1000, 2000, 5000, 10000] milliseconds
+
+#### Metrics Exposed
+
+The hook exposes the following Prometheus metrics:
+
+- `dddkit_stories_executions_latency_ms` - Histogram metric tracking total story execution time
+  - Labels: `service`, `story_name`, `status`, and any custom labels
+  - Help text: "Story Execution Time"
+
+- `dddkit_stories_step_executions_latency_ms` - Histogram metric tracking individual step execution time
+  - Labels: `service`, `story_name`, `step_name`, `status`, and any custom labels
+  - Help text: "Story step execution time"
+
+#### Grafana Dashboards
+
+Example Grafana dashboards are provided in the `.grafana` folder to visualize the metrics exposed by the
+PrometheusMetricsHook:
+
+- `stories-execution-dashboard.json` - Dashboard showing overall story execution metrics including success rate, total
+  executions, execution status, latency percentiles, and execution trends over time
+- `stories-steps-execution-dashboard.json` - Dashboard showing detailed metrics for individual story steps including
+  step duration, execution count, latency percentiles, and error tracking
 
 ## Project Structure
 
