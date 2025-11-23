@@ -1,5 +1,12 @@
 <!--next-version-placeholder-->
 
+## v0.4.0 (2025-11-23)
+
+### ✨ New
+-  Add Prometheus metrics hook for story execution.
+
+-  Added integration with aioprometheus to collect script execution metrics.
+
 ## v0.3.0 (2025-11-15)
 
 ### ✨ New
