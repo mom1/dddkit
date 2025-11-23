@@ -452,14 +452,22 @@ class CustomHook:
 inject_hooks(HookedStory, hooks=[CustomHook()])
 ```
 
-### Prometheus Metrics Hook
+## Prometheus Integration
 
-The `PrometheusMetricsHook` is a specialized hook that collects and exposes Prometheus metrics for story execution,
-providing observability and performance monitoring for your DDDKit story operations.
+DDDKit provides comprehensive Prometheus integration through specialized metrics hooks that collect and expose metrics
+for story execution, providing observability and performance monitoring for your DDDKit story operations.
 
-#### Installation
+### Available Hook Classes
 
-To use the PrometheusMetricsHook, you need to install the optional prometheus dependency:
+DDDKit offers two Prometheus metrics hooks depending on your application's needs:
+
+1. **`dddkit.stories.prometheus.hook.PrometheusMetricsHook`**: Uses the standard `prometheus_client` library
+2. **`dddkit.stories.aioprometheus.hook.PrometheusMetricsHook`**: Uses the `aioprometheus` library for asynchronous
+   environments
+
+### Installation
+
+For the standard Prometheus hook, install the optional prometheus dependency:
 
 ```bash
 uv pip install dddkit[prometheus]
@@ -470,6 +478,22 @@ Or with pip:
 ```bash
 pip install dddkit[prometheus]
 ```
+
+For the async-friendly hook, install the aioprometheus dependency:
+
+```bash
+uv pip install dddkit[aioprometheus]
+```
+
+Or with pip:
+
+```bash
+pip install dddkit[aioprometheus]
+```
+
+### Standard Prometheus Hook
+
+The `PrometheusMetricsHook` from the `dddkit.stories.prometheus` module uses the standard `prometheus_client` library.
 
 #### Usage
 
@@ -520,7 +544,7 @@ story(state)
 
 #### Configuration Options
 
-The PrometheusMetricsHook class accepts the following configuration parameters:
+The standard PrometheusMetricsHook class accepts the following configuration parameters:
 
 - `app_name` (str, default: 'dddkit_stories'): The name of the service to use in the metrics
 - `prefix` (str, default: 'dddkit_stories'): The prefix to use for the metrics
@@ -528,9 +552,71 @@ The PrometheusMetricsHook class accepts the following configuration parameters:
 - `buckets` (list[str | float] | None, default: None): A list of buckets to use for the histogram. If not provided,
   defaults to [10, 25, 50, 100, 300, 500, 1000, 2000, 5000, 10000] milliseconds
 
-#### Metrics Exposed
+### AIOPrometheus Hook
 
-The hook exposes the following Prometheus metrics:
+The `PrometheusMetricsHook` from the `dddkit.stories.aioprometheus` module uses the `aioprometheus` library and is more
+suitable for asynchronous applications.
+
+#### Usage
+
+```python
+from dataclasses import dataclass
+from dddkit.stories import I, Story, inject_hooks
+from dddkit.stories.aioprometheus import PrometheusMetricsHook
+from types import SimpleNamespace
+
+
+@dataclass(frozen=True, slots=True)
+class AsyncMonitoredStory(Story):
+  I.step_one
+  I.step_two
+  I.step_three
+
+  class State(SimpleNamespace):
+    step_one_completed: bool = False
+    step_two_completed: bool = False
+    step_three_completed: bool = False
+
+  def step_one(self, state: State):
+    state.step_one_completed = True
+
+  def step_two(self, state: State):
+    state.step_two_completed = True
+
+  def step_three(self, state: State):
+    state.step_three_completed = True
+
+
+# Create an instance of AIOPrometheusMetricsHook
+prometheus_hook = PrometheusMetricsHook(
+  app_name="my_async_app",
+  prefix="my_async_service",
+  labels={"env": "production", "version": "1.0.0"},
+  buckets=[5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]  # in milliseconds
+)
+
+# Inject the hook into your story class
+inject_hooks(AsyncMonitoredStory, hooks=[prometheus_hook])
+
+# Execute the story
+story = AsyncMonitoredStory()
+state = story.State()
+story(state)
+```
+
+#### Configuration Options
+
+The AIOPrometheusMetricsHook class accepts similar configuration parameters:
+
+- `app_name` (str, default: 'dddkit_stories'): The name of the service to use in the metrics
+- `prefix` (str, default: 'dddkit_stories'): The prefix to use for the metrics
+- `labels` (dict[str, str], default: {}): A mapping of labels to add to the metrics
+- `buckets` (list[float] | None, default: None): A list of buckets to use for the histogram. If not provided,
+  defaults to [10.0, 25.0, 50.0, 100.0, 300.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0] milliseconds
+
+### Common Metrics Exposed
+
+Both Prometheus hooks expose the following Prometheus metrics:
 
 - `dddkit_stories_executions_latency_ms` - Histogram metric tracking total story execution time
   - Labels: `service`, `story_name`, `status`, and any custom labels
@@ -540,15 +626,27 @@ The hook exposes the following Prometheus metrics:
   - Labels: `service`, `story_name`, `step_name`, `status`, and any custom labels
   - Help text: "Story step execution time"
 
-#### Grafana Dashboards
+### Key Differences
+
+The main difference between the two hooks is the underlying Prometheus library they use:
+
+- Standard hook uses `prometheus_client` library and is suitable for synchronous applications
+- AIOPrometheus hook uses `aioprometheus` library and provides better integration with async frameworks
+
+### Grafana Dashboards
 
 Example Grafana dashboards are provided in the `.grafana` folder to visualize the metrics exposed by the
-PrometheusMetricsHook:
+Prometheus hooks, along with screenshot previews:
 
 - `stories-execution-dashboard.json` - Dashboard showing overall story execution metrics including success rate, total
   executions, execution status, latency percentiles, and execution trends over time
 - `stories-steps-execution-dashboard.json` - Dashboard showing detailed metrics for individual story steps including
   step duration, execution count, latency percentiles, and error tracking
+- `stories.png` - Screenshot preview of the stories execution dashboard
+- `stories_steps.png` - Screenshot preview of the stories steps execution dashboard
+
+These screenshots provide visual examples of what the dashboards look like when properly configured with Prometheus
+metrics from DDDKit stories.
 
 ## Project Structure
 

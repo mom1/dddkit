@@ -332,10 +332,12 @@
         }
       ],
       "options": {
+        "xTickLabelSpacing": 100,
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "orientation": "auto"
       },
