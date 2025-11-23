@@ -1,3 +1,6 @@
+CHECK_MUST_RETURN_BOOL_MSG = 'Invariants must return a boolean value'
+
+
 class DDDKitError(Exception):
     """Base class for all DDDKit exceptions."""
 
@@ -14,3 +17,12 @@ class MissingDependencyError(DDDKitError, ImportError):  # pyright: ignore[repor
             f"`pip install 'dddkit[{extra or install_package or package}]'` to install dddkit with the required extra "
             f"or 'pip install {install_package or package}' to install the package separately"
         )
+
+
+class CheckMustReturnBoolError(DDDKitError):
+    def __init__(self) -> None:
+        super().__init__(CHECK_MUST_RETURN_BOOL_MSG)
+
+
+class CheckFailedError(DDDKitError):
+    """Error: check failed."""

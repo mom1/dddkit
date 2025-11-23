@@ -1,3 +1,8 @@
+"""Hooks are needed to implement Domain Probe.
+
+https://martinfowler.com/articles/domain-oriented-observability.html
+"""
+
 from __future__ import annotations
 
 import time
