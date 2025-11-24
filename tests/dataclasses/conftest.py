@@ -18,19 +18,15 @@ class BasketChanged(DomainEvent):
 class Basket(Aggregate):
     basket_id: BasketId
 
-    @dataclass(frozen=True, kw_only=True)
     class Created(AggregateEvent):
         """Event for basket creation."""
 
-    @dataclass(frozen=True, kw_only=True)
     class Changed(AggregateEvent):
-        """Event for basket change."""
+        """Event for basket changed."""
 
-    @dataclass(frozen=True, kw_only=True)
     class ChangedId(Changed):
         basket_id: BasketId
 
-    @dataclass(frozen=True, kw_only=True)
     class Deleted(AggregateEvent):
         """Event for basket deletion."""
 
