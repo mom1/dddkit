@@ -24,6 +24,38 @@
 
 Kit for using DDD (Domain-Driven Design) tactical patterns in Python.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Installing dddkit](#installing-dddkit)
+  - [For Development](#for-development)
+- [Usage](#usage)
+  - [Basic Usage](#basic-usage)
+    - [Using dataclasses implementation](#using-dataclasses-implementation)
+    - [Using pydantic implementation](#using-pydantic-implementation)
+  - [Aggregate Events](#aggregate-events)
+  - [Event Handling](#event-handling)
+  - [Stories](#stories)
+    - [Basic Story Usage](#basic-story-usage)
+    - [Stories with Async Operations](#stories-with-async-operations)
+    - [Stories with Hooks](#stories-with-hooks)
+- [Prometheus Integration](#prometheus-integration)
+  - [Available Hook Classes](#available-hook-classes)
+  - [Installation](#installation-1)
+  - [Standard Prometheus Hook](#standard-prometheus-hook)
+  - [AIOPrometheus Hook](#aioprometheus-hook)
+  - [Common Metrics Exposed](#common-metrics-exposed)
+  - [Key Differences](#key-differences)
+  - [Grafana Dashboards](#grafana-dashboards)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+  - [Development Commands](#development-commands)
+- [License](#license)
+- [Development Status](#development-status)
+
 ## Overview
 
 `dddkit` is a Python library designed to facilitate the implementation of Domain-Driven Design tactical patterns. It
