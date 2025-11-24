@@ -1,5 +1,10 @@
 <!--next-version-placeholder-->
 
+## v0.4.1 (2025-11-24)
+
+### 📝 Documentation
+-  Added table of contents for better navigation.
+
 ## v0.4.0 (2025-11-23)
 
 ### ✨ New
