@@ -270,7 +270,7 @@ handle_event = EventBroker()
 
 # sync
 
-@handle_event.handle(ProductCreated)
+@handle_event.instance(ProductCreated)
 def _(event: ProductCreated):
   # Handle the event
   print(f"Product {event.name} created with ID {event.product_id}")
@@ -285,7 +285,7 @@ def context():
 
 # Or async
 
-@handle_event.handle(ProductCreated)
+@handle_event.instance(ProductCreated)
 async def _(event: ProductCreated):
   # Handle the event
   print(f"Product {event.name} created with ID {event.product_id}")
