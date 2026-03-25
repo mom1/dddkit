@@ -1,5 +1,10 @@
 <!--next-version-placeholder-->
 
+## v0.4.2 (2026-03-25)
+
+### 📝 Documentation
+-  Correct method name for event handler registration.
+
 ## v0.4.1 (2025-11-24)
 
 ### 📝 Documentation
