@@ -305,6 +305,7 @@ reportUnnecessaryIsInstance = false
 # reportUnknownArgumentType = false
 reportUninitializedInstanceVariable = false
 reportUnusedParameter = false
+reportUntypedFunctionDecorator = false
 
 [tool.pytest.ini_options]
 python_files = ["*.py"]

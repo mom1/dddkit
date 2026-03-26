@@ -27,6 +27,17 @@ class ExpectedData(TypedDict):
     labels_step: dict[str, str]
 
 
+@pytest.fixture
+def mock_context_story(
+    sample_story: SampleStory, prometheus_hook: AIOPrometheusMetricsHook, mocker: MockerFixture
+) -> StoryExecutionContext:
+    ctx = StoryExecutionContext(story=sample_story)
+    mocker.patch.object(SampleStory, '__context__cls__', autospec=True, return_value=ctx)
+
+    sample_story.register_hook('after', prometheus_hook.after)
+    return ctx
+
+
 class TestPrometheusMetricsHook:
     @pytest.fixture
     def prometheus_hook_factory(self) -> Generator[Callable[..., PrometheusMetricsHook], None, None]:
@@ -76,16 +87,6 @@ class TestPrometheusMetricsHook:
                 **labels,
             },
         }
-
-    @pytest.fixture
-    def mock_context_story(
-        self, sample_story: SampleStory, prometheus_hook: PrometheusMetricsHook, mocker: MockerFixture
-    ) -> StoryExecutionContext:
-        ctx = StoryExecutionContext(story=sample_story)
-        mocker.patch.object(SampleStory, '__context__cls__', autospec=True, return_value=ctx)
-
-        sample_story.register_hook('after', prometheus_hook.after)
-        return ctx
 
     def test_hook_initialization(self, prometheus_hook: PrometheusMetricsHook, expected_data: dict[str, Any]) -> None:
         metric_name = expected_data.get('_metric_name')
@@ -177,16 +178,6 @@ class TestAIOPrometheusMetricsHook:
             labels={'story_name': 'SampleStory'},
             labels_step={'story_name': 'SampleStory', 'step_name': ANY, 'status': ANY},
         )
-
-    @pytest.fixture
-    def mock_context_story(
-        self, sample_story: SampleStory, prometheus_hook: AIOPrometheusMetricsHook, mocker: MockerFixture
-    ) -> StoryExecutionContext:
-        ctx = StoryExecutionContext(story=sample_story)
-        mocker.patch.object(SampleStory, '__context__cls__', autospec=True, return_value=ctx)
-
-        sample_story.register_hook('after', prometheus_hook.after)
-        return ctx
 
     def test_hook_initialization(self, prometheus_hook: AIOPrometheusMetricsHook, expected_data: ExpectedData) -> None:
         metric_name = expected_data.get('_metric_name')

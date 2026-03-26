@@ -6,7 +6,6 @@ Example:
 
     BasketId = NewType('BasketId', UUID)
 
-    @dataclass(kw_only=True)
     class Basket(Aggregate):
         basket_id: BasketId
 
@@ -37,12 +36,20 @@ Example:
             self.add_event(self.Deleted(basket_id=self.basket_id))
 """
 
+import inspect
 import zoneinfo
+from collections.abc import Callable, Generator
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import TypeVar
+from functools import wraps
+from types import SimpleNamespace
+from typing import ParamSpec, TypeVar, cast
 
-A = TypeVar('A', bound='Aggregate')
+from dddkit.exceptions import CheckFailedError, CheckMustReturnBoolError
+
+P = ParamSpec('P')
+R = bool | tuple[bool, str]
+T = TypeVar('T', bound=Callable[..., R])
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -51,9 +58,28 @@ class AggregateEvent:
 
     occurred_on: datetime = field(default_factory=lambda: datetime.now(zoneinfo.ZoneInfo('UTC')))
 
+    def __init_subclass__(cls) -> None:
+        dataclass(cls, frozen=True, kw_only=True)
+
+
+class CheckableObject(SimpleNamespace):
+    def __post_init__(self) -> None:
+        self.__check()
+
+    def __check(self) -> None:
+        for _check in self.__obtain_checks():
+            _check()
+
+    def __obtain_checks(self) -> Generator[Callable[..., bool | tuple[bool, str]], None, None]:
+        for _method_name, method in inspect.getmembers(
+            self, predicate=lambda v: inspect.ismethod(v) and not v.__name__.startswith('_')
+        ):
+            if getattr(method, '_check', False):
+                yield cast(Callable[..., bool | tuple[bool, str]], method)
+
 
 @dataclass(kw_only=True)
-class Aggregate:
+class Aggregate(CheckableObject):
     """Aggregate.
 
     Key characteristics:
@@ -69,6 +95,9 @@ class Aggregate:
 
     _events: list[AggregateEvent] = field(default_factory=list, init=False, repr=False, compare=False)
 
+    def __init_subclass__(cls) -> None:
+        dataclass(cls, kw_only=True)
+
     def get_events(self) -> list[AggregateEvent]:
         return self._events
 
@@ -79,8 +108,7 @@ class Aggregate:
         self._events.append(event)
 
 
-@dataclass(kw_only=True)
-class Entity:
+class Entity(CheckableObject):
     """Entity.
 
     Key characteristics:
@@ -92,9 +120,11 @@ class Entity:
     * May contain logic
     """
 
+    def __init_subclass__(cls) -> None:
+        dataclass(cls, kw_only=True)
 
-@dataclass(frozen=True, kw_only=True)
-class ValueObject:
+
+class ValueObject(CheckableObject):
     """Value object.
 
     Key characteristics:
@@ -104,3 +134,35 @@ class ValueObject:
     * Can validate itself.
     * Can represent itself in different formats.
     """
+
+    def __init_subclass__(cls) -> None:
+        dataclass(cls, frozen=True, kw_only=True)
+
+
+def check(func: T | None = None, *, exception_type: type[Exception] | None = None) -> Callable[[T], T] | T:
+    def decorator(f: T) -> T:
+        @wraps(f)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            result = f(*args, **kwargs)
+            message = ''
+
+            if isinstance(result, tuple):
+                result, message = result
+
+            if not isinstance(result, bool):
+                raise CheckMustReturnBoolError
+
+            if not result:
+                if exception_type:
+                    raise exception_type(message)
+                raise CheckFailedError(message or f'Check failed: {f.__name__}')
+
+            return result
+
+        wrapper._check = True  # pyright: ignore[reportAttributeAccessIssue]
+
+        return wrapper  # pyright: ignore[reportReturnType]
+
+    if func is None:
+        return decorator
+    return decorator(func)

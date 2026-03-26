@@ -142,14 +142,12 @@ ProductId = NewType('ProductId', int)
 BasketId = NewType('BasketId', int)
 
 
-@dataclass(kw_only=True)
 class Product(Entity):
   product_id: ProductId
   name: ProductName
   amount: float = 0
 
 
-@dataclass(kw_only=True)
 class Basket(Aggregate):
   basket_id: BasketId
   items: dict[ProductId, Product] = field(default_factory=dict)
@@ -228,7 +226,6 @@ ProductId = NewType('ProductId', int)
 BasketId = NewType('BasketId', int)
 
 
-@dataclass(kw_only=True)
 class Product(Entity):
   product_id: ProductId
   name: ProductName
@@ -240,7 +237,6 @@ class Basket(Aggregate):
   basket_id: BasketId
   items: dict[ProductId, Product] = field(default_factory=dict)
 
-  @dataclass(frozen=True, kw_only=True)
   class Created(AggregateEvent):
     """Basket created event"""
 
