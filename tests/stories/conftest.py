@@ -12,8 +12,6 @@ from dddkit.stories import I, Story
 
 @dataclass(frozen=True, slots=True)
 class SampleStory(Story):
-    """Sample Story."""
-
     I.step_one
     I.step_two
     I.step_three
@@ -35,8 +33,6 @@ class SampleStory(Story):
 
 @dataclass(frozen=True, slots=True)
 class StoryWithError(Story):
-    """Sample Story with error."""
-
     I.step_one
     I.step_error
 
