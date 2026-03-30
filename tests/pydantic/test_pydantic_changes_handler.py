@@ -6,20 +6,23 @@ from typing_extensions import override
 
 from dddkit.pydantic import AggregateEvent, ChangesHandler, DomainEvent
 
-from .conftest import Basket, BasketChanged, BasketId
+from .conftest import Basket, BasketChanged, BasketFactory, BasketId
 
 
-class Result(NamedTuple):
+class ChangeResult(NamedTuple):
+    """Result of processing basket changes."""
+
     created_fields: dict[str, Any] = {}
     updated_fields: dict[str, Any] = {}
     deleted_id: list[BasketId] = []
     domain_events: list[DomainEvent] = []
 
 
-class BasketChangesHandler(ChangesHandler[Basket, Result]):
-    _slots__: tuple[str, ...] = ('created_fields', 'updated_fields', 'deleted_id', 'domain_events')
+class BasketChangesHandler(ChangesHandler[Basket, ChangeResult]):
+    """Handler for basket aggregate changes."""
 
-    result_type: type[Result] = Result
+    _slots__: tuple[str, ...] = ('created_fields', 'updated_fields', 'deleted_id', 'domain_events')
+    result_type: type[ChangeResult] = ChangeResult
 
     @override
     def _clear_state(self) -> None:
@@ -46,24 +49,85 @@ class BasketChangesHandler(ChangesHandler[Basket, Result]):
         self.deleted_id.append(basket.basket_id)
 
 
-class TestChangeHandler:
-    def test_handle_changes(self, basket: Basket):
-        basket_changes_handler = BasketChangesHandler()
-        basket_changes_handler.created_fields = {'id': cast(BasketId, uuid4())}
+def test_when_basket_created_then_handler_records_created_field(basket_factory: type[BasketFactory]):
+    """Created event results in recording basket ID in created_fields."""
+    basket = basket_factory.created()
+    handler = BasketChangesHandler()
 
-        new_basket_id = cast(BasketId, uuid4())
-        basket.change_id(new_basket_id)
+    with handler as hc:
+        result = hc(basket)
 
-        with basket_changes_handler as hc:
-            assert not hc.created_fields
+    assert result.created_fields == {'id': basket.basket_id}
 
-            result = hc(basket)
 
-            assert result.updated_fields == {'id': new_basket_id}
+def test_when_basket_id_changed_then_handler_records_update_and_emits_event(basket_factory: type[BasketFactory]):
+    """ChangedId event results in recording update and emitting domain event."""
+    basket = basket_factory.build()
+    handler = BasketChangesHandler()
+    new_id = cast(BasketId, uuid4())
+    basket.change_id(new_id)
 
-            assert result.domain_events
-            assert basket_changes_handler.domain_events
-            assert isinstance(result.domain_events[0], BasketChanged)
+    with handler as hc:
+        result = hc(basket)
 
-        assert result.updated_fields
-        assert not basket_changes_handler.updated_fields
+    assert result.updated_fields == {'id': new_id}
+    assert len(result.domain_events) == 1
+    assert isinstance(result.domain_events[0], BasketChanged)
+    assert result.domain_events[0].basket_id == new_id
+
+
+def test_when_basket_deleted_then_handler_records_deleted_id(basket_factory: type[BasketFactory]):
+    """Deleted event results in recording basket ID for deletion."""
+    basket = basket_factory.build()
+    handler = BasketChangesHandler()
+    basket.delete()
+
+    with handler as hc:
+        result = hc(basket)
+
+    assert result.deleted_id == [basket.basket_id]
+
+
+def test_given_multiple_events_when_handled_then_all_processed(basket_factory: type[BasketFactory]):
+    """Handler processes all pending events in aggregate."""
+    basket = basket_factory.build()
+    handler = BasketChangesHandler()
+    new_id = cast(BasketId, uuid4())
+
+    basket.change_id(new_id)
+    basket.delete()
+
+    with handler as hc:
+        result = hc(basket)
+
+    assert result.updated_fields == {'id': new_id}
+    assert result.deleted_id == [basket.basket_id]
+    assert len(result.domain_events) == 1
+
+
+def test_when_context_exits_then_handler_state_cleared(basket_factory: type[BasketFactory]):
+    """Handler state is cleared after context manager exits."""
+    basket = basket_factory.build()
+    handler = BasketChangesHandler()
+    basket.change_id(cast(BasketId, uuid4()))
+
+    with handler as hc:
+        hc(basket)
+        assert handler.updated_fields
+
+    assert not handler.updated_fields
+    assert not handler.domain_events
+
+
+def test_given_cleared_events_when_handled_then_no_result(basket_factory: type[BasketFactory]):
+    """Aggregate with cleared events produces empty result."""
+    basket = basket_factory.build()
+    handler = BasketChangesHandler()
+    basket.change_id(cast(BasketId, uuid4()))
+    basket.clear_events()
+
+    with handler as hc:
+        result = hc(basket)
+
+    assert not result.updated_fields
+    assert not result.domain_events

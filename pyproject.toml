@@ -70,6 +70,7 @@ dev = [
   "coverage==7.12.*",
   "rich==14.2.*",
   "funlog==0.2.*",
+  "polyfactory>=2.0.0",
 ]
 lint = [
   "ruff==0.14.*",

@@ -1,8 +1,9 @@
-from asyncio import get_running_loop
+from asyncio import gather, get_running_loop, to_thread
 from collections.abc import Awaitable, Callable
 from datetime import datetime
 from inspect import iscoroutinefunction
-from typing import ClassVar, TypeAlias, TypeVar
+from types import CoroutineType
+from typing import Any, ClassVar, TypeAlias, TypeVar
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
@@ -32,10 +33,11 @@ class DomainEvent(BaseModel):
 
 
 class EventBroker:
-    __slots__: tuple[str, ...] = ('_event_handlers',)
+    __slots__: tuple[str, ...] = ('_event_handlers', '_parallel')
 
-    def __init__(self) -> None:
+    def __init__(self, parallel: bool = False) -> None:
         self._event_handlers: dict[Predicate, set[HandlerEvent]] = {}
+        self._parallel: bool = parallel
 
     def __call__(self, event: DomainEvent) -> Awaitable[None]:
         try:
@@ -86,11 +88,21 @@ class EventBroker:
             handler(event)
 
     async def async_publish(self, event: DomainEvent) -> None:
-        for handler in self._get_subscribers(event):
-            if iscoroutinefunction(handler):
-                await handler(event)
+        coroutines: list[CoroutineType[Any, Any, Awaitable[None] | None]] = []
+
+        for h in self._get_subscribers(event):
+            if iscoroutinefunction(h):
+                coroutines.append(h(event))
+            elif self._parallel:
+                coroutines.append(to_thread(h, event))
             else:
-                handler(event)
+                h(event)
+
+        if self._parallel:
+            await gather(*coroutines)
+        else:
+            for c in coroutines:
+                await c
 
     def instance(self, obj_type: type[ET] | tuple[type[ET], ...] | None) -> Callable[[HandlerEvent], HandlerEvent]:
         _type = obj_type if obj_type is not None else type(None)

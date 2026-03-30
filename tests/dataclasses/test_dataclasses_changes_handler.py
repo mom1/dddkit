@@ -6,7 +6,7 @@ from typing_extensions import override
 
 from dddkit.dataclasses import AggregateEvent, ChangesHandler, DomainEvent
 
-from .conftest import Basket, BasketChanged, BasketId
+from .conftest import Basket, BasketChanged, BasketFactory, BasketId
 
 
 class Result(NamedTuple):
@@ -47,10 +47,11 @@ class BasketChangesHandler(ChangesHandler[Basket, Result]):
 
 
 class TestChangeHandler:
-    def test_handle_changes(self, basket: Basket):
+    def test_handle_changes(self, basket_factory: type[BasketFactory]):
         basket_changes_handler = BasketChangesHandler()
         basket_changes_handler.created_fields = {'id': cast(BasketId, uuid4())}
 
+        basket = basket_factory.build()
         new_basket_id = cast(BasketId, uuid4())
         basket.change_id(new_basket_id)
 

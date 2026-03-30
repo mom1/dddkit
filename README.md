@@ -295,6 +295,18 @@ async def context():
   await handle_event(product_event)
 ```
 
+> **Note**: Async event handlers are executed sequentially by default. To enable parallel execution, create EventBroker with `parallel=True`:
+
+```python
+# Sequential (default, backward compatible)
+broker = EventBroker()
+await handle_event(product_event)
+
+# Parallel
+broker = EventBroker(parallel=True)
+await handle_event(product_event)
+```
+
 ### Stories
 
 Stories provide a pattern for defining sequential business operations with optional hooks for execution tracking,
