@@ -295,6 +295,8 @@ async def context():
   await handle_event(product_event)
 ```
 
+> **Note**: Async event handlers are executed in parallel using `asyncio.gather`. Sync handlers are called sequentially.
+
 ### Stories
 
 Stories provide a pattern for defining sequential business operations with optional hooks for execution tracking,

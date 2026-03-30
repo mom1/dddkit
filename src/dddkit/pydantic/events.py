@@ -1,3 +1,4 @@
+import asyncio
 from asyncio import get_running_loop
 from collections.abc import Awaitable, Callable
 from datetime import datetime
@@ -86,11 +87,15 @@ class EventBroker:
             handler(event)
 
     async def async_publish(self, event: DomainEvent) -> None:
-        for handler in self._get_subscribers(event):
+        handlers = self._get_subscribers(event)
+        async_handlers = []
+        for handler in handlers:
             if iscoroutinefunction(handler):
-                await handler(event)
+                async_handlers.append(handler(event))
             else:
                 handler(event)
+        if async_handlers:
+            await asyncio.gather(*async_handlers)
 
     def instance(self, obj_type: type[ET] | tuple[type[ET], ...] | None) -> Callable[[HandlerEvent], HandlerEvent]:
         _type = obj_type if obj_type is not None else type(None)
