@@ -1,5 +1,22 @@
 <!--next-version-placeholder-->
 
+## v0.5.0 (2026-04-13)
+
+### ✨ New
+-  Add parallel async execution to EventBroker
+
+    - Add parallel parameter to EventBroker.__init__ for parallel async handling
+    - Execute async handlers concurrently with asyncio.gather when parallel&#x3D;True
+    - Separate coroutines and sync handlers upfront for reuse
+    - Add tests for parallel and sequential execution modes
+    - Update README with usage examples
+    - Fix type annotations and use _ naming for unused handlers
+    - Unify factories, refactoring tests, 100% coverage.
+    
+
+### ⬆ Dependencies
+-  Bump astral-sh/setup-uv to v8.0.0.
+
 ## v0.4.2 (2026-03-25)
 
 ### 📝 Documentation
